@@ -3,6 +3,7 @@ README.md
 MyBack/target/**
 **/*.uvoptx*
 **/vite.config.js
+Linux_dockerCompose/**
 
 # ==============================================
 # 一、通用系统&编辑器/IDE 全局忽略规则
