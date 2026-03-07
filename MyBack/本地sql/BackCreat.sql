@@ -6,12 +6,13 @@ use back;
 drop table if exists log;
 drop table if exists MyDate;
 drop table if exists Data;
+drop table if exists Mydata;
 -- 操作日志表
-create table Data(
+create table Mydata(
                     id int unsigned primary key auto_increment comment 'ID',
                     temperature float comment '温度',
                     humidity float comment '湿度',
-                    write_Time datetime comment '记录时间'
+                    write_time datetime comment '记录时间'
 ) comment '数据表';
 
-insert into Data(temperature, humidity, write_Time) values (23.5, 45.5, now());
+insert into Mydata(temperature, humidity, write_time) values (23.5, 45.5, now());

@@ -1,14 +1,15 @@
 package com.myback.pojo;
 
+import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@lombok.Data
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Data {
+public class Mydata {
     private Integer id;
     private float temperature;
     private float humidity;
