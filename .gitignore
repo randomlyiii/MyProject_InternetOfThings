@@ -1,1 +1,186 @@
 README.md
+
+MyBack/target/**
+**/*.uvoptx*
+**/vite.config.js
+
+# ==============================================
+# 一、通用系统&编辑器/IDE 全局忽略规则
+# ==============================================
+# 系统临时文件
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# 编辑器/IDE 配置与临时文件
+## JetBrains 全家桶（IDEA、CLion等，适配Java+STM32开发）
+**/.idea/**
+**/.idea/
+**/*.iml
+**/*.iws
+**/*.ipr
+.idea/
+*.iml
+
+## VS Code（适配Vue前端开发）
+**/.vscode/**
+**/.vscode/
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+*.code-workspace
+
+## Vim/NeoVim
+*.un~
+Session.vim
+.netrwhist
+
+# 日志与临时文件
+**/*.log
+**/logs/**
+**/temp/**
+**/tmp/**
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+
+# ==============================================
+# 二、Java/SpringBoot 后端忽略规则（适配 MyBack 模块）
+# ==============================================
+# Maven 编译输出
+**/target/**
+**/target/
+target/
+
+# Maven 包装器（可选保留，如需团队统一maven版本可注释掉）
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Gradle 相关（备用，如用gradle可启用）
+# .gradle/
+# build/
+# !gradle/wrapper/gradle-wrapper.jar
+
+# SpringBoot 敏感配置文件（你之前需求的配置忽略）
+**/application.yml
+**/application.yaml
+**/application.properties
+**/application-*.yml
+**/application-*.yaml
+**/application-*.properties
+
+# Java 虚拟机dump文件
+*.hprof
+*.pid
+*.heapdump
+
+
+# ==============================================
+# 三、Vue 前端项目忽略规则（适配 vue-project 模块）
+# ==============================================
+# 依赖包核心忽略
+**/node_modules/**
+**/node_modules/
+node_modules/
+
+# 打包构建输出
+**/dist/**
+**/dist/
+dist/
+**/dist-ssr/**
+**/*.local
+
+# 环境变量敏感文件（本地密钥、接口地址等，禁止提交）
+.env
+.env.local
+.env.*.local
+
+# 前端构建缓存
+.cache
+.parcel-cache
+.nuxt
+.next
+.vuepress/dist
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.vscode-test
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# 可选：包锁文件（团队开发建议保留，注释掉下面3行即可）
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+
+# ==============================================
+# 四、STM32 单片机项目忽略规则（适配 Project_STM32 模块）
+# 支持 Keil MDK、STM32CubeMX、IAR 开发环境
+# ==============================================
+# Keil MDK 编译输出文件夹
+**/Objects/**
+**/Listings/**
+**/Debug/**
+**/Release/**
+Objects/
+Listings/
+Debug/
+Release/
+
+# Keil 用户个性化配置文件（每人本地配置不同，禁止提交）
+**/*.uvguix.*
+**/*.uvopt.*
+**/*.uvgui.*
+
+# STM32 编译生成的固件文件（可按需保留，一般源码提交即可）
+**/*.bin
+**/*.hex
+**/*.axf
+**/*.elf
+**/*.lib
+**/*.a
+
+# STM32CubeMX 生成的临时/备份文件
+**/*.bak
+**/Backup/**
+**/.mxproject/
+**/RTE/
+
+# 调试器/仿真器日志与临时文件
+**/JLinkLog.txt
+**/JLinkSettings.ini
+**/*.jlink
+**/Trace.log
+**/CR_Log.log
+**/SessionLog.txt
+
+# IAR 开发环境忽略（备用）
+# **/settings/
+# **/Exe/
+# **/Obj/
+# **/*.pbd
+# **/*.dep
+# **/*.wsdt
+# **/*.iar_*
+
+# ==============================================
+# 五、项目自定义忽略（按需调整）
+# ==============================================
+# 本地资料/文档/临时文件（不提交到仓库）
+资料/**
+准备/**
+*.zip
+*.rar
+*.7z
