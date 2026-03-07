@@ -26,3 +26,6 @@ mybatis:
 logging:
   level:
     org.springframework.jdbc.support.JdbcTransactionManager: debug
+  charset:
+    console: utf-8
+    file: utf-8

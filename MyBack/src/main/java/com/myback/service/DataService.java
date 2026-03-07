@@ -10,4 +10,10 @@ public interface DataService {
      * @return
      */
     List<Mydata> getAllData();
+
+    /**
+     * 保存数据
+     * @param mydata
+     */
+    void updateData(Mydata mydata);
 }
