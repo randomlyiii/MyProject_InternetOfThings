@@ -64,9 +64,9 @@ target/
 !**/src/test/**/target/
 
 # Gradle 相关（备用，如用gradle可启用）
-# .gradle/
-# build/
-# !gradle/wrapper/gradle-wrapper.jar
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
 
 # SpringBoot 敏感配置文件（你之前需求的配置忽略）
 **/application.yml
@@ -120,9 +120,9 @@ dist/
 .pnp.*
 
 # 可选：包锁文件（团队开发建议保留，注释掉下面3行即可）
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 
 # ==============================================
@@ -167,13 +167,13 @@ Release/
 **/SessionLog.txt
 
 # IAR 开发环境忽略（备用）
-# **/settings/
-# **/Exe/
-# **/Obj/
-# **/*.pbd
-# **/*.dep
-# **/*.wsdt
-# **/*.iar_*
+**/settings/
+**/Exe/
+**/Obj/
+**/*.pbd
+**/*.dep
+**/*.wsdt
+**/*.iar_*
 
 # ==============================================
 # 五、项目自定义忽略（按需调整）
