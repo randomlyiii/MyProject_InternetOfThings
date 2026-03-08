@@ -181,4 +181,5 @@ MyBack/target/**
 **/*.uvoptx*
 **/vite.config.js
 Linux_dockerCompose/**
-.sql
+*.sql
+.json

@@ -27,3 +27,14 @@ npm run dev
 ```sh
 npm run build
 ```
+
+### Use plugin Element Plus@https://element-plus.org/zh-CN/guide/installation
+
+```sh
+npm install element-plus --save
+```
+### use axios
+
+```sh
+npm install axios --save
+```

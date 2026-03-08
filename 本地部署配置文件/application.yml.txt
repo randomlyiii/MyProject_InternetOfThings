@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: MyWeb
+  # 配置数据库
+  datasource:
+    url: jdbc:mysql://localhost:3306/back
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: # 写数据库用户名
+    password: # YourPassword
+  servlet:
+    multipart:
+      #最大单个文件大小
+      max-file-size: 10MB
+      #最大请求大小（包括所有文件和表单数据）
+      max-request-size: 100MB
+
+# mybatis配置
+mybatis:
+  configuration:
+    # 开启日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 开启了驼峰命名映射开关
+    map-underscore-to-camel-case: true
+
+#配置事务管理日志级别
+logging:
+  level:
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
+  charset:
+    console: utf-8
+    file: utf-8
+
+#阿里云OSS
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    bucketName: java-ai
+    region: cn-beijing

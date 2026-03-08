@@ -1,0 +1,28 @@
+http://localhost:8080/data
+
+get请求成功返回数据格式：
+{
+    "code": 1,
+    "msg": "success",
+    "data": [
+        {
+            "id": 1,
+            "temperature": 66.0,
+            "humidity": 22.0,
+            "writeTime": "2026-03-08T12:12:38"
+        }
+    ]
+}
+
+POST请求数据格式：
+{
+    "temperature": "66",
+    "humidity": "22"
+}
+
+POST请求成功返回数据格式：
+{
+    "code": 1,
+    "msg": "success",
+    "data": null
+}
