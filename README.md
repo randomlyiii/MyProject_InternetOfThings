@@ -8,4 +8,4 @@ vue3 Front-end project + SpringBoot And Maven Back-end project + MySQL database 
 Get Data by stm32 and send to Back-end project.
 
 make sure you have installed docker and docker compose.
-make sure that ip of projects are in the same network.
+make sure that ip of projects are in the right network-configuration.
