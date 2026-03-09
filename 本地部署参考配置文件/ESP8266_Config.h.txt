@@ -1,0 +1,13 @@
+#ifndef __ESP8266_Config_H
+#define __ESP8266_Config_H
+
+#include "stm32f10x.h"
+
+// WiFi配置
+extern char WIFI_SSID[];
+extern char WIFI_PWD[];
+// 服务器配置（可替换）
+extern char SERVER_IP[];
+#define SERVER_PORT 8080
+
+#endif

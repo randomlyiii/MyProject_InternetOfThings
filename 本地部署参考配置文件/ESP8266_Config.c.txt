@@ -1,0 +1,5 @@
+#include "esp8266.h"
+
+char WIFI_SSID[] = "WiFi SSID";
+char WIFI_PWD[] = "WiFi PWD";
+char SERVER_IP[] = "Server IP";

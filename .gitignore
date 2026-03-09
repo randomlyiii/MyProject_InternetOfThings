@@ -183,4 +183,5 @@ MyBack/target/**
 Linux_dockerCompose/**
 *.sql
 .json
-ESP8266_Config*.*
+ESP8266_Config.c
+ESP8266_Config.h
