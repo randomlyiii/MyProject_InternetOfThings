@@ -1,28 +1,70 @@
-#include "stm32f10x.h"                  // Device header
-#include "Delay.h"
+#include "stm32f10x.h"
+#include "usart.h"
+#include "delay.h"
+#include "ESP8266.h"
+#include "esp8266_config.h"
 #include "OLED.h"
+#include <stdio.h>
+
+// 调试用JSON数据
+#define TEST_JSON "{\"temperature\": \"55\",\"humidity\": \"8\"}"
 
 int main(void)
 {
-	/*模块初始化*/
-	OLED_Init();		//OLED初始化
-	
-	/*OLED显示*/
-	OLED_ShowChar(1, 1, 'A');				//1行1列显示字符A
-	
-	OLED_ShowString(1, 3, "HelloWorld!");	//1行3列显示字符串HelloWorld!
-	
-	OLED_ShowNum(2, 1, 12345, 5);			//2行1列显示十进制数字12345，长度为5
-	
-	OLED_ShowSignedNum(2, 7, -66, 2);		//2行7列显示有符号十进制数字-66，长度为2
-	
-	OLED_ShowHexNum(3, 1, 0xAA55, 4);		//3行1列显示十六进制数字0xA5A5，长度为4
-	
-	OLED_ShowBinNum(4, 1, 0xAA55, 16);		//4行1列显示二进制数字0xA5A5，长度为16
-											//C语言无法直接写出二进制数字，故需要用十六进制表示
-	
-	while (1)
-	{
-		
-	}
+    uint8_t esp_status = 0;
+
+    // 1. 外设初始化（顺序不可乱）
+    Delay_ms(100); // 上电延时
+    USART1_Init(); // 串口1初始化（ESP8266通信）
+    OLED_Init();   // OLED显示（调试用）
+    OLED_Clear();
+
+    // 2. 显示初始化提示
+    OLED_ShowString(1, 1, "ESP8266 Init...");
+    Delay_ms(500);
+
+    // 3. ESP8266初始化（连接WiFi）
+    esp_status = ESP8266_Init(WIFI_SSID, WIFI_PWD);
+
+    // 4. 显示初始化结果
+    if (esp_status == 1)
+    {
+        OLED_ShowString(1, 1, "WiFi Connected!");
+        OLED_ShowString(2, 1, "SSID:");
+        OLED_ShowString(2, 6, WIFI_SSID);
+			  Delay_ms(2000);
+
+        //测试发送JSON数据
+        OLED_ShowString(3, 1, "Send JSON...");
+        if (ESP8266_SendJSON(SERVER_IP, SERVER_PORT, TEST_JSON))
+        {
+            OLED_ShowString(4, 1, "Send OK!");
+        }
+        else
+        {
+						while(1){} //
+					  OLED_Clear();
+					  OLED_ShowString(1, 1, "Fail");
+					  OLED_ShowString(2, 1, "a");
+        }
+    }
+    else
+    {
+        OLED_ShowString(1, 1, "Init Failed!");
+        // 分步排查：显示每一步AT指令结果
+        OLED_ShowString(2, 1, "AT Test:");
+        OLED_ShowNum(2, 9, ESP8266_SendCmd("AT", "OK", 1000), 1);
+
+        OLED_ShowString(3, 1, "RST Test:");
+        OLED_ShowNum(3, 9, ESP8266_SendCmd("AT+RST", "ready", 3000), 1);
+
+        OLED_ShowString(4, 1, "CWMODE:");
+        OLED_ShowNum(4, 9, ESP8266_SendCmd("AT+CWMODE=1", "OK", 1000), 1);
+    }
+
+    while (1)
+    {
+        // 主循环
+        Delay_ms(1000);
+    }
 }
