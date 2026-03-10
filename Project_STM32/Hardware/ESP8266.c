@@ -59,7 +59,7 @@ uint8_t ESP8266_Init(const char *ssid, const char *password)
     if (!ESP8266_SendCmd("AT", "OK", 1000))
     {
         OLED_ShowString(2, 1, "AT Fail");
-        Debug_ShowRX(); // 显示错误响应，便于排查
+        // Debug_ShowRX(); // 显示错误响应，便于排查
         Delay_ms(2000);
         return 0;
     }
@@ -129,7 +129,7 @@ uint8_t ESP8266_SendJSON(const char *ip, uint16_t port, const char *json)
     if (!ESP8266_SendCmd(cmd, "OK", 3000))
     {
         OLED_ShowString(2, 1, "PING Fail");
-        Debug_ShowRX(); // 显示PING失败原因（超时/不可达）
+        // Debug_ShowRX(); // 显示PING失败原因（超时/不可达）
         Delay_ms(2000);
         return 0;
     }
