@@ -8,8 +8,9 @@
 #include <stdio.h>
 #include <string.h>
 
+// WiFiAndServer_Config -> ESP8266_Config.h Esp8266_Config.c
 // 调试用JSON数据
-#define TEST_JSON "{\"temperature\": \"55\",\"humidity\": \"8\"}"
+#define TEST_JSON "{\"temperature\": \"20\",\"humidity\": \"86\"}"
 
 int main(void)
 {
@@ -25,73 +26,124 @@ int main(void)
     OLED_Init();       // OLED显示（调试用）
     OLED_Clear();
 
-    // // 2. 显示初始化提示
-    // OLED_ShowString(1, 1, "ESP8266 Init...");
-    // Delay_ms(500);
+    OLED_ShowString(1, 1, "ESP8266 Init...");
+    Delay_ms(500);
 
-    // // 3. ESP8266初始化（连接WiFi）
-    // esp_status = ESP8266_Init(WIFI_SSID, WIFI_PWD);
+    // ESP8266初始化（连接WiFi）
+    esp_status = ESP8266_Init(WIFI_SSID, WIFI_PWD);
 
-    // // 4. 显示初始化结果
-    // if (esp_status == 1)
-    // {
-    //     OLED_ShowString(1, 1, "WiFi Connected!");
-    //     OLED_ShowString(2, 1, "SSID:");
-    //     OLED_ShowString(2, 6, WIFI_SSID);
-    // 		  Delay_ms(2000);
+    // 初始化测试
+    if (esp_status == 1)
+    {
+        OLED_ShowString(1, 1, "WiFi Connected!");
+        OLED_ShowString(2, 1, "SSID:");
+        OLED_ShowString(2, 6, WIFI_SSID);
+        Delay_ms(2000);
 
-    //     //测试发送JSON数据
-    //     OLED_ShowString(3, 1, "Send JSON...");
-    //     if (ESP8266_SendJSON(SERVER_IP, SERVER_PORT, TEST_JSON))
-    //     {
-    //         OLED_ShowString(4, 1, "Send OK!");
-    //     }
-    //     else
-    //     {
-    // 					while(1){} //
-    // 				  OLED_Clear();
-    // 				  OLED_ShowString(1, 1, "Fail");
-    // 				  OLED_ShowString(2, 1, "a");
-    //     }
-    // }
-    // else
-    // {
-    //     OLED_ShowString(1, 1, "Init Failed!");
-    //     // 分步排查：显示每一步AT指令结果
-    //     OLED_ShowString(2, 1, "AT Test:");
-    //     OLED_ShowNum(2, 9, ESP8266_SendCmd("AT", "OK", 1000), 1);
+        // 测试发送JSON数据
+        OLED_ShowString(3, 1, "Send JSON...");
+        if (ESP8266_SendTest(SERVER_IP, SERVER_PORT, TEST_JSON))
+        {
+            OLED_ShowString(4, 1, "Send OK!");
+            Delay_ms(4000);
+        }
+        else
+        {
+            // 发送失败时，循环显示错误提示
+            while (1)
+            {
+                OLED_Clear();
+                OLED_ShowString(1, 1, "SendTest Failed!");
+                Delay_ms(2000);
+            }
+        }
+    }
+    else
+    {
+        OLED_Clear();
+        OLED_ShowString(1, 1, "WiFi Init Failed");
 
-    //     OLED_ShowString(3, 1, "RST Test:");
-    //     OLED_ShowNum(3, 9, ESP8266_SendCmd("AT+RST", "ready", 3000), 1);
+        // 分步排查：显示每一步AT指令结果
+        OLED_ShowString(2, 1, "AT Test:");
+        OLED_ShowNum(2, 9, ESP8266_SendCmd("AT", "OK", 1000), 1);
 
-    //     OLED_ShowString(4, 1, "CWMODE:");
-    //     OLED_ShowNum(4, 9, ESP8266_SendCmd("AT+CWMODE=1", "OK", 1000), 1);
-    // }
+        OLED_ShowString(3, 1, "RST Test:");
+        OLED_ShowNum(3, 9, ESP8266_SendCmd("AT+RST", "ready", 3000), 1);
 
+        OLED_ShowString(4, 1, "CWMODE:");
+        OLED_ShowNum(4, 9, ESP8266_SendCmd("AT+CWMODE=1", "OK", 1000), 1);
+
+        Delay_ms(4000);
+
+        while (1)
+        {
+            OLED_Clear();
+            OLED_ShowString(1, 1, "WiFi Init Failed");
+
+            Delay_ms(2000);
+        }
+    }
+
+    // 测试显示温湿度
+    OLED_Clear();
+    OLED_ShowString(1, 1, "dht11 test...");
+    Delay_ms(2000);
+    OLED_Clear();
+    // 1. 读取DHT11温湿度数据（需确保dht11.h中定义了DHT11_Read_Data函数）
+    if (DHT11_Read_Data(&humi_i, &humi_d, &temp_i, &temp_d) == 0)
+    {
+        // 2. 格式化温湿度字符串（带单位，便于阅读）
+        sprintf(temperature, "Temp:%d.%d`C", temp_i, temp_d);
+        sprintf(humidity, "Humi:%d.%d%%", humi_i, humi_d);
+
+        // 3. OLED显示温湿度（第1行显示温度，第2行显示湿度）
+        OLED_ShowString(1, 1, temperature);
+        OLED_ShowString(2, 1, humidity);
+    }
+    else
+    {
+        // 读取失败时显示错误提示
+        OLED_ShowString(1, 1, "DHT11 Error!");
+        OLED_ShowString(2, 1, "Read Failed");
+    }
+    Delay_ms(2000);
+
+    OLED_Clear();
+    OLED_ShowString(1, 1, "Test Complete!");
+    Delay_ms(2000);
+
+    char json_buf[64];
     while (1)
     {
-        // ========== 新增/修改：DHT11读取+OLED显示逻辑 ==========
-        OLED_Clear(); // 清屏
-
-        // 1. 读取DHT11温湿度数据（需确保dht11.h中定义了DHT11_Read_Data函数）
+        OLED_Clear();
         if (DHT11_Read_Data(&humi_i, &humi_d, &temp_i, &temp_d) == 0)
         {
-            // 2. 格式化温湿度字符串（带单位，便于阅读）
-					  sprintf(temperature,"Temp:%d.%d`C", temp_i, temp_d);
-            sprintf(humidity,"Humi:%d.%d%%", humi_i, humi_d);
+            sprintf(temperature, "Temp:%d.%d`C", temp_i, temp_d);
+            sprintf(humidity, "Humi:%d.%d%%", humi_i, humi_d);
+            sprintf(json_buf, "{\"temperature\":\"%d.%d\",\"humidity\":\"%d.%d\"}",
+                    temp_i, temp_d,  // 温度：整数.小数
+                    humi_i, humi_d); // 湿度：整数.小数
 
-            // 3. OLED显示温湿度（第1行显示温度，第2行显示湿度）
+            // 发送JSON数据到服务器
+            if (!ESP8266_SendJSON(SERVER_IP, SERVER_PORT, json_buf))
+            {
+                OLED_Clear();
+                OLED_ShowString(1, 1, "Send Failed");
+                Delay_ms(2000);
+                break;
+            }
             OLED_ShowString(1, 1, temperature);
             OLED_ShowString(2, 1, humidity);
         }
         else
         {
-            // 读取失败时显示错误提示
             OLED_ShowString(1, 1, "DHT11 Error!");
             OLED_ShowString(2, 1, "Read Failed");
         }
-        // ========== DHT11+OLED逻辑结束 ==========
 
-        Delay_ms(2000); // 2秒刷新一次
+        Delay_ms(2000);
     }
+
+    OLED_Clear();
+    OLED_ShowString(1, 1, "Task Stopped");
 }
