@@ -30,9 +30,10 @@ logging:
     console: utf-8
     file: utf-8
 
+#can be omitted
 #阿里云OSS
 aliyun:
   oss:
-    endpoint: https://oss-cn-beijing.aliyuncs.com
-    bucketName: java-ai
-    region: cn-beijing
+    endpoint: # YourEndpoint
+    bucketName: # YourBucketName
+    region: # YourRegion
