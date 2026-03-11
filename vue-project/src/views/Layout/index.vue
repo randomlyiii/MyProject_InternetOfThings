@@ -1,24 +1,25 @@
 <script setup>
 import { Timer } from '@element-plus/icons-vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { queryAllApi } from '@/api/data'
 import { ElMessage } from 'element-plus'
 
+let timer = null
 // 必须用 const 定义 ref
 const tableData = ref([])
 
-// 时间格式化函数（核心）
+// 时间格式化函数
 const formatDateTime = (time) => {
     // 处理空值/无效值
     if (!time) return '';
-    // 转换为 Date 对象（兼容时间戳、ISO 字符串等格式）
+    // 转换为 Date 对象
     const date = new Date(time);
     // 校验 Date 对象有效性
     if (isNaN(date.getTime())) return '时间格式错误';
 
     // 年、月、日（补零处理）
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从 0 开始，需 +1
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
 
     // 时、分、秒（补零处理）
@@ -64,8 +65,18 @@ const handleClear = () => {
     ElMessage.success('清空成功')
 }
 
+// 钩子函数
 onMounted(() => {
     handleInquire()
+    timer = setInterval(handleInquire, 5000)
+})
+
+// 4. 组件销毁前 → 清除定时器
+onUnmounted(() => {
+    if (timer) {
+        clearInterval(timer)
+        timer = null
+    }
 })
 </script>
 
@@ -84,12 +95,12 @@ onMounted(() => {
             </el-table-column>
             <el-table-column label="Temperature" width="180">
                 <template #default="scope">
-                    <el-tag type="warning">{{ scope.row.temperature }}</el-tag>
+                    <el-tag type="warning">{{ scope.row.temperature }}&deg;C</el-tag>
                 </template>
             </el-table-column>
             <el-table-column label="Humidity" width="180">
                 <template #default="scope">
-                    <el-tag type="success">{{ scope.row.humidity }}</el-tag>
+                    <el-tag type="success">{{ scope.row.humidity }} %RH</el-tag>
                 </template>
             </el-table-column>
             <el-table-column label="Operations" width="200">

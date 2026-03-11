@@ -304,6 +304,6 @@ uint8_t ESP8266_SendJSON(const char *ip, uint16_t port, const char *json)
 
     // 4. 发送完成，关闭TCP连接
     ESP8266_SendCmd("AT+CIPCLOSE", "OK", 1000);
-    OLED_ShowString(4, 1, "Send Success!");
+    OLED_ShowString(4, 1, "KEEP SENDING");
     return 1;
 }
