@@ -172,17 +172,14 @@ Release/
 # ==============================================
 # 五、项目自定义忽略（按需调整）
 # ==============================================
-准备/**
 *.zip
 *.rar
 *.7z
+jdk17.tar.gz
 
 MyBack/target/**
 **/*.uvoptx*
 **/vite.config.js
-Linux_dockerCompose/jdk17*
-Linux_dockerCompose/MyBack-0.0.1-SNAPSHOT.jar
-Linux_dockerCompose/**
-*.sql
+
 .json
 ESP8266_Config*.*

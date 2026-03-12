@@ -1,5 +1,5 @@
 # 一键部署
-docker compose up -d
+docker compose up -d --build
 
 # 启动服务
 docker compose start

@@ -1,0 +1,50 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    ports:
+      - "3307:3306"
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: 123
+    volumes:
+      - "/usr/local/app/mysql/conf:/etc/mysql/conf.d"
+      - "/usr/local/app/mysql/data:/var/lib/mysql"
+      - "/usr/local/app/mysql/init:/docker-entrypoint-initdb.d"
+    networks:
+      - myback-net
+    # 健康检查配置
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uapp_user", "-pTest@123" ]
+      interval: 5s # 每5s检查一次
+      timeout: 3s # 检查超时时间
+      retries: 10 # 重试10次失败则判定容器不健康
+      start_period: 10s # 容器启动后10s再开始检查
+    depends_on: {} # 清空原有depends_on
+  myback:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: myback-server
+    ports:
+      - "8080:8080"
+    networks:
+      - myback-net
+    depends_on:
+      mysql:
+        condition: service_healthy # 仅在mysql健康检查通过后启动
+  nginx:
+    image: nginx:1.20.2
+    container_name: nginx-myback
+    ports:
+      - "80:80"
+    volumes:
+      - "/usr/local/app/nginx/conf/nginx.conf:/etc/nginx/nginx.conf"
+      - "/usr/local/app/nginx/html:/usr/share/nginx/html"
+    depends_on:
+      - myback
+    networks:
+      - myback-net
+networks:
+  myback-net:
+    driver: bridge
