@@ -6,7 +6,7 @@
 uint8_t JDY31_RX_BUF[JDY31_RX_BUF_SIZE];
 uint8_t JDY31_RX_CNT = 0;
 uint8_t JDY31_RX_FLAG = 0;
-uint8_t JDY31_Connected_Flag = 0; // 0=未连接 1=已连接，防重复发送
+uint8_t JDY31_Connected_Flag = 0; // 0=未连接 1=已连接，6针jdy31防重复发送
 Server_Config_t ServerCfg;
 
 // 串口2初始化 PA2=TX(接JDY31 RX) PA3=RX(接JDY31 TX)
@@ -128,7 +128,7 @@ void JDY31_Set_Config(void)
 void JDY31_Send_JSON_Data(uint8_t temp_i, uint8_t temp_d, uint8_t humi_i, uint8_t humi_d)
 {
     char buf[64];
-    sprintf(buf, "{\"temperature\":\"%d.%d\",\"humidity\":\"%d.%d\"}\r\n", temp_i, temp_d, humi_i, humi_d);
+    sprintf(buf, "{\"temperature\": \"%d.%d\",\"humidity\": \"%d.%d\"}\r\n", temp_i, temp_d, humi_i, humi_d);
     JDY31_Send_String(buf);
 }
 
@@ -218,6 +218,77 @@ void JDY31_Parse_JSON(void)
     JDY31_Send_String(resp_buf);
 }
 
+/**
+ * @brief  解析JDY31接收到的JSON数据，检测是否包含 {" BT ":" OK "}
+ * @retval 1-检测到目标数据  0-未检测到
+ */
+#include <string.h>
+#include <ctype.h>
+
+uint8_t JDY31_Parse_TestOK(void)
+{
+    // 1. 没有数据直接返回
+    if (JDY31_RX_CNT == 0)
+        return 0;
+
+    // 2. 安全结束字符串
+    JDY31_RX_BUF[JDY31_RX_CNT] = '\0';
+
+    char *p = (char *)JDY31_RX_BUF;
+    // 匹配 { （允许前后空格）
+    while (*p && isspace((unsigned char)*p))
+        p++;
+    if (*p != '{')
+        return 0;
+    p++;
+
+    // 匹配 "BT"
+    while (*p && isspace((unsigned char)*p))
+        p++;
+    if (*p != '"')
+        return 0;
+    p++;
+
+    // 匹配 BT
+    if (*p != 'B' || *(p + 1) != 'T')
+        return 0;
+    p += 2;
+
+    // 匹配结束引号
+    while (*p && isspace((unsigned char)*p))
+        p++;
+    if (*p != '"')
+        return 0;
+    p++;
+
+    // 匹配 :
+    while (*p && isspace((unsigned char)*p))
+        p++;
+    if (*p != ':')
+        return 0;
+    p++;
+
+    // 匹配 "OK"
+    while (*p && isspace((unsigned char)*p))
+        p++;
+    if (*p != '"')
+        return 0;
+    p++;
+
+    // 匹配 OK
+    if (*p != 'O' || *(p + 1) != 'K')
+        return 0;
+    p += 2;
+
+    // 匹配结束引号
+    while (*p && isspace((unsigned char)*p))
+        p++;
+    if (*p != '"')
+        return 0;
+
+    return 1;
+}
+
 // 清空接收缓冲区和标志
 void JDY31_Clear_RX_Buf(void)
 {
@@ -265,21 +336,21 @@ void USART2_IRQHandler(void)
             JDY31_RX_FLAG = 1;
         }
 
-        // 检测蓝牙连接成功，自动发送connected
-        if (strstr((char *)JDY31_RX_BUF, "CONNECTED") != NULL)
-        {
-            if (JDY31_Connected_Flag == 0)
-            {
-                JDY31_Connected_Flag = 1;
-                JDY31_Send_String("connected\r\n"); // 连接成功自动发送
-            }
-        }
+        // // 检测蓝牙连接成功，自动发送connected
+        // if (strstr((char *)JDY31_RX_BUF, "CONNECTED") != NULL)
+        // {
+        //     if (JDY31_Connected_Flag == 0)
+        //     {
+        //         JDY31_Connected_Flag = 1;
+        //         JDY31_Send_String("connected\r\n"); // 连接成功自动发送
+        //     }
+        // }
 
-        // 检测蓝牙断开，重置标志位
-        if (strstr((char *)JDY31_RX_BUF, "DISCONNECT") != NULL)
-        {
-            JDY31_Connected_Flag = 0;
-            JDY31_Clear_RX_Buf();
-        }
+        // // 检测蓝牙断开，重置标志位
+        // if (strstr((char *)JDY31_RX_BUF, "DISCONNECT") != NULL)
+        // {
+        //     JDY31_Connected_Flag = 0;
+        //     JDY31_Clear_RX_Buf();
+        // }
     }
 }

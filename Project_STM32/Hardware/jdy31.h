@@ -33,6 +33,7 @@ void JDY31_Send_String(char *str);
 void JDY31_Set_Config(void);
 void JDY31_Send_JSON_Data(uint8_t temp_i, uint8_t temp_d, uint8_t humi_i, uint8_t humi_d);
 void JDY31_Parse_JSON(void);
+uint8_t JDY31_Parse_TestOK(void);
 void JDY31_Clear_RX_Buf(void);
 
 #endif
