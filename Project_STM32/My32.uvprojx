@@ -133,12 +133,12 @@
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
-            <Capability>0</Capability>
-            <DriverSelection>-1</DriverSelection>
+            <Capability>1</Capability>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -484,6 +484,16 @@
               <FileName>dht11.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Hardware\dht11.h</FilePath>
+            </File>
+            <File>
+              <FileName>jdy31.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\jdy31.c</FilePath>
+            </File>
+            <File>
+              <FileName>jdy31.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\jdy31.h</FilePath>
             </File>
           </Files>
         </Group>

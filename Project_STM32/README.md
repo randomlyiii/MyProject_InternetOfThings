@@ -16,3 +16,9 @@
     RST -> 3.3V
     GPIO0 -> 3.3V
     GPIO2 -> 3.3V
+
+# JDY-31:
+    RX  -> PA2
+    TX  -> PA3
+    EN  -> default 悬空
+    STATE -> default 悬空
