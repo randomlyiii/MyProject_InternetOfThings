@@ -1,5 +1,6 @@
 #include "jdy31.h"
 #include "delay.h"
+#include "esp8266_config.h"
 
 // 全局变量定义
 uint8_t JDY31_RX_BUF[JDY31_RX_BUF_SIZE];
@@ -7,7 +8,6 @@ uint8_t JDY31_RX_CNT = 0;
 uint8_t JDY31_RX_FLAG = 0;
 uint8_t JDY31_Connected_Flag = 0; // 0=未连接 1=已连接，防重复发送
 Server_Config_t ServerCfg;
-Sensor_Data_t SensorData;
 
 // 串口2初始化 PA2=TX(接JDY31 RX) PA3=RX(接JDY31 TX)
 void JDY31_Init(void)
@@ -57,8 +57,6 @@ void JDY31_Init(void)
     strcpy(ServerCfg.server_ip, "192.168.1.100");
     ServerCfg.port = 8080;
     ServerCfg.upload_interval = 2000;
-    SensorData.temp = 25.0f;
-    SensorData.humi = 50.0f;
     JDY31_Connected_Flag = 0;
 }
 
@@ -127,56 +125,96 @@ void JDY31_Set_Config(void)
 }
 
 // 发送温湿度JSON数据
-void JDY31_Send_JSON_Data(void)
+void JDY31_Send_JSON_Data(uint8_t temp_i, uint8_t temp_d, uint8_t humi_i, uint8_t humi_d)
 {
     char buf[64];
-    sprintf(buf, "{\"temperature\":%.1f,\"humidity\":%.1f}\r\n", SensorData.temp, SensorData.humi);
+    sprintf(buf, "{\"temperature\":\"%d.%d\",\"humidity\":\"%d.%d\"}\r\n", temp_i, temp_d, humi_i, humi_d);
     JDY31_Send_String(buf);
 }
 
 // 解析JSON配置
+// 解析 JSON 服务器参数
 void JDY31_Parse_JSON(void)
 {
     char *p = (char *)JDY31_RX_BUF;
     char *start = NULL;
     char *end = NULL;
 
-    // 提取服务器IP
-    start = strstr(p, "\"server\":");
+    // 1. 提取 WiFi 名称 (wifi)
+    start = strstr(p, "\"wifi\":");
     if (start != NULL)
     {
-        start += 9;
+        start += 7; // 跳过 "\"wifi\":"
+        // 跳过可能的空格
+        while (*start == ' ' || *start == '\"')
+            start++;
         end = strstr(start, "\"");
-        if (end != NULL && (end - start) < sizeof(ServerCfg.server_ip))
+        if (end != NULL && (end - start) < sizeof(WIFI_SSID))
         {
             uint8_t len = end - start;
-            strncpy(ServerCfg.server_ip, start, len);
-            ServerCfg.server_ip[len] = '\0';
+            strncpy(WIFI_SSID, start, len);
+            WIFI_SSID[len] = '\0';
         }
     }
 
-    // 提取端口号
+    // 2. 提取 WiFi 密码 (password)
+    start = strstr(p, "\"password\":");
+    if (start != NULL)
+    {
+        start += 11; // 跳过 "\"password\":"
+        while (*start == ' ' || *start == '\"')
+            start++;
+        end = strstr(start, "\"");
+        if (end != NULL && (end - start) < sizeof(WIFI_PWD))
+        {
+            uint8_t len = end - start;
+            strncpy(WIFI_PWD, start, len);
+            WIFI_PWD[len] = '\0';
+        }
+    }
+
+    // 3. 提取服务器地址 (server)
+    start = strstr(p, "\"server\":");
+    if (start != NULL)
+    {
+        start += 9; // 跳过 "\"server\":"
+        while (*start == ' ' || *start == '\"')
+            start++;
+        end = strstr(start, "\"");
+        if (end != NULL && (end - start) < sizeof(SERVER_IP))
+        {
+            uint8_t len = end - start;
+            strncpy(SERVER_IP, start, len);
+            SERVER_IP[len] = '\0';
+        }
+    }
+
+    // 4. 提取端口号 (port)
     start = strstr(p, "\"port\":");
     if (start != NULL)
     {
-        start += 7;
-        ServerCfg.port = atoi(start);
+        start += 7; // 跳过 "\"port\":"
+        while (*start == ' ' || *start == '\"')
+            start++; // 兼容带引号或不带引号的数字
+        SERVER_PORT = atoi(start);
     }
 
-    // 提取上报间隔
+    // 5. 提取上报间隔 (interval)
     start = strstr(p, "\"interval\":");
     if (start != NULL)
     {
-        start += 11;
-        ServerCfg.upload_interval = atoi(start);
-        if (ServerCfg.upload_interval < 500)
-            ServerCfg.upload_interval = 500;
+        start += 11; // 跳过 "\"interval\":"
+        while (*start == ' ' || *start == '\"')
+            start++;
+        UPLOAD_INTERVAL = atoi(start);
+        if (UPLOAD_INTERVAL < 500) // 最小间隔限制
+            UPLOAD_INTERVAL = 500;
     }
 
-    // 回显配置结果
-    char resp_buf[128];
-    sprintf(resp_buf, "[配置成功] IP:%s 端口:%d 间隔:%dms\r\n",
-            ServerCfg.server_ip, ServerCfg.port, ServerCfg.upload_interval);
+    // 回显解析结果，方便调试
+    char resp_buf[256];
+    sprintf(resp_buf, "[ConfigSetSuccess] WiFi:%s Pwd:%s IP:%s Port:%d Interval:%dms\r\n",
+            WIFI_SSID, WIFI_PWD, SERVER_IP, SERVER_PORT, UPLOAD_INTERVAL);
     JDY31_Send_String(resp_buf);
 }
 

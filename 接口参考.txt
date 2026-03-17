@@ -27,14 +27,16 @@ POST请求成功返回数据格式：
     "data": null
 }
 
-JDY31发送数据格式：
+JDY31发送温湿度数据格式：
 {
     "temperature": "66",
     "humidity": "22"
 }
 
-JDY31返回数据格式：
+JDY31接收数据格式：
 {
+    "wifi": "/** wifi名称 **/",
+    "password": "/** wifi密码 **/",
     "server": "/** 服务器地址 **/",
     "port": "/** 端口号 **/",
     "interval": "/** 间隔时间 **/"

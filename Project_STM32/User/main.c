@@ -15,7 +15,7 @@
 
 int main(void)
 {
-  uint8_t esp_status = 0;
+  uint8_t esp_statusesp_status = 0;
   char temperature[12];
   char humidity[12];
   uint8_t temp_i, temp_d, humi_i, humi_d;
@@ -25,8 +25,8 @@ int main(void)
   // USART1_Init();      // 串口1初始化（ESP8266通信）
   JDY31_Init();       // 初始化蓝牙驱动
   JDY31_Set_Config(); // 自动配置蓝牙名字+PIN码
-  // DHT11_GPIO_Init();  // DHT11初始化（温湿度传感器）
-  OLED_Init(); // OLED显示（调试用）
+  DHT11_GPIO_Init();  // DHT11初始化（温湿度传感器）
+  OLED_Init();
   OLED_Clear();
   OLED_ShowString(1, 1, "SYS InitAllRight");
   Delay_ms(1000);
@@ -43,8 +43,17 @@ int main(void)
   while (1)
   {
     // 发送温湿度JSON
-    JDY31_Send_JSON_Data();
-    OLED_ShowString(4, 1, "Send JSON OK");
+    if (DHT11_Read_Data(&humi_i, &humi_d, &temp_i, &temp_d) == 0)
+    {
+      sprintf(temperature, "Temp:%d.%d`C", temp_i, temp_d);
+      sprintf(humidity, "Humi:%d.%d%%", humi_i, humi_d);
+
+      OLED_Clear();
+      OLED_ShowString(1, 1, temperature);
+      OLED_ShowString(2, 1, humidity);
+    }
+    JDY31_Send_JSON_Data(temp_i, temp_d, humi_i, humi_d);
+    OLED_ShowString(4, 1, "SendToIphone");
     Delay_ms(1000);
 
     // 蓝牙接收数据处理
@@ -69,21 +78,21 @@ int main(void)
       // 清空缓冲区，准备下次接收
       JDY31_Clear_RX_Buf();
 
-      // 回到等待状态
-      OLED_Clear();
-      OLED_ShowString(1, 1, "BT Waiting...");
-      OLED_ShowString(2, 1, "RX: None");
+      // // 回到等待状态
+      // OLED_Clear();
+      // OLED_ShowString(1, 1, "BT Waiting...");
+      // OLED_ShowString(2, 1, "RX: None");
     }
 
-    // 显示蓝牙连接状态
-    if (JDY31_Connected_Flag)
-    {
-      OLED_ShowString(3, 1, "BT Connected");
-    }
-    else
-    {
-      OLED_ShowString(3, 1, "BT Disconnect");
-    }
+    // // 显示蓝牙连接状态
+    // if (JDY31_Connected_Flag)
+    // {
+    //   OLED_ShowString(3, 1, "BT Connected");
+    // }
+    // else
+    // {
+    //   OLED_ShowString(3, 1, "BT Disconnect");
+    // }
 
     Delay_ms(100); // 降低CPU占用
   }

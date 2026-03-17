@@ -20,26 +20,18 @@ typedef struct
     uint16_t upload_interval;
 } Server_Config_t;
 
-// 温湿度数据结构体
-typedef struct
-{
-    float temp;
-    float humi;
-} Sensor_Data_t;
-
 // 全局变量声明
 extern uint8_t JDY31_RX_BUF[JDY31_RX_BUF_SIZE];
 extern uint8_t JDY31_RX_CNT;
 extern uint8_t JDY31_RX_FLAG;
 extern uint8_t JDY31_Connected_Flag; // 蓝牙连接状态标志
 extern Server_Config_t ServerCfg;
-extern Sensor_Data_t SensorData;
 
 // 函数声明
 void JDY31_Init(void);
 void JDY31_Send_String(char *str);
 void JDY31_Set_Config(void);
-void JDY31_Send_JSON_Data(void);
+void JDY31_Send_JSON_Data(uint8_t temp_i, uint8_t temp_d, uint8_t humi_i, uint8_t humi_d);
 void JDY31_Parse_JSON(void);
 void JDY31_Clear_RX_Buf(void);
 
