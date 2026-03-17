@@ -43,9 +43,9 @@ int main(void)
   while (1)
   {
     // 发送温湿度JSON
-    //JDY31_Send_JSON_Data();
-    //OLED_ShowString(4, 1, "Send JSON OK");
-    //Delay_ms(1000);
+    JDY31_Send_JSON_Data();
+    OLED_ShowString(4, 1, "Send JSON OK");
+    Delay_ms(1000);
 
     // 蓝牙接收数据处理
     if (JDY31_RX_FLAG)
