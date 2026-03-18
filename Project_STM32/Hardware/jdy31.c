@@ -7,7 +7,7 @@ uint8_t JDY31_RX_BUF[JDY31_RX_BUF_SIZE];
 uint8_t JDY31_RX_CNT = 0;
 uint8_t JDY31_RX_FLAG = 0;
 uint8_t JDY31_Connected_Flag = 0; // 0=未连接 1=已连接，6针jdy31防重复发送
-Server_Config_t ServerCfg;
+// Server_Config_t ServerCfg;
 
 // 串口2初始化 PA2=TX(接JDY31 RX) PA3=RX(接JDY31 TX)
 void JDY31_Init(void)
@@ -48,15 +48,15 @@ void JDY31_Init(void)
 
     // 中断优先级配置
     NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 
     // 默认参数初始化
-    strcpy(ServerCfg.server_ip, "192.168.1.100");
-    ServerCfg.port = 8080;
-    ServerCfg.upload_interval = 2000;
+    // strcpy(ServerCfg.server_ip, "192.168.1.100");
+    // ServerCfg.port = 8080;
+    // ServerCfg.upload_interval = 2000;
     JDY31_Connected_Flag = 0;
 }
 
@@ -213,7 +213,15 @@ void JDY31_Parse_JSON(void)
 
     // 回显解析结果，方便调试
     char resp_buf[256];
-    sprintf(resp_buf, "[ConfigSetSuccess] WiFi:%s Pwd:%s IP:%s Port:%d Interval:%dms\r\n",
+    sprintf(resp_buf, "[ConfigSet] WiFi:%s Pwd:%s IP:%s Port:%d Interval:%dms\r\n",
+            WIFI_SSID, WIFI_PWD, SERVER_IP, SERVER_PORT, UPLOAD_INTERVAL);
+    JDY31_Send_String(resp_buf);
+}
+
+void JDY31_Send_Config(void)
+{
+    char resp_buf[256];
+    sprintf(resp_buf, "[CurrentConfig] WiFi:%s Pwd:%s IP:%s Port:%d Interval:%dms\r\n",
             WIFI_SSID, WIFI_PWD, SERVER_IP, SERVER_PORT, UPLOAD_INTERVAL);
     JDY31_Send_String(resp_buf);
 }

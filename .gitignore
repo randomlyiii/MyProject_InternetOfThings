@@ -182,5 +182,6 @@ MyBack/target/**
 **/vite.config.js
 
 .json
-ESP8266_Config*.*
+ESP8266_Config.c
+ESP8266_Config.h
 MyBack-0.0.1-SNAPSHOT.jar

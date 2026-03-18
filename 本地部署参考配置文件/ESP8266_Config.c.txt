@@ -1,0 +1,6 @@
+#include "esp8266.h"
+char WIFI_SSID[32] = "";
+char WIFI_PWD[64] = "";
+char SERVER_IP[32] = "";
+uint16_t SERVER_PORT = 8080;
+uint16_t UPLOAD_INTERVAL = 2000;

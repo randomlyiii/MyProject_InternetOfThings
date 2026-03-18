@@ -22,3 +22,16 @@
     TX  -> PA3
     EN  -> default 悬空
     STATE -> default 悬空
+
+# JDY-31:
+# JSON:
+# Test-OK
+{"BT": "OK"}
+# ChangeConfig
+{
+    "wifi": "/** wifi名称 **/",
+    "password": "/** wifi密码 **/",
+    "server": "/** 服务器地址 **/",
+    "port": "/** 端口号 **/",
+    "interval": "/** 间隔时间 **/"
+}
